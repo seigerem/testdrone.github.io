@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prueba de Estudio de Licencia de Drones</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    transition: background-color 0.5s, color 0.5s;
+    background-color: black;
+    color: white;
+  }
+
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .question {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+  }
+
+  .options label {
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: white;
+    color: black;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  #result {
+    font-size: 1.2rem;
+    text-align: center;
+  }
+
+  #modeToggle {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Prueba de Estudio de Licencia de Drones</h1>
+  <div class="question" id="question"></div>
+  <div class="options" id="options"></div>
+  <button onclick="checkAnswer()">Responder</button>
+  <div id="result"></div>
+</div>
+<div id="modeToggle" onclick="toggleMode()"></div>
+
+<script>
+
+const allQuestions   = [
+  {
+    // 1
+    question: "¿Qué es un Plan de Vuelo?",
+    options: [
+      "a) Información respecto a un vuelo proyectado o parte del mismo.",
+      "b) Información respecto al tiempo meteorológico del momento.",
+      "c) Información respecto a un vuelo únicamente de uso comercial."
+    ],
+    answer: "a) Información respecto a un vuelo proyectado o parte del mismo."
+  },
+  {
+    // 2
+    question: "¿Qué es el AIP?",
+    options: [
+      "a) Publicación de Información de Mantenimiento.",
+      "b) Publicación de información para la Navegación Aérea.",
+      "c) a) y b) son correctas."
+    ],
+    answer: "b) Publicación de información para la Navegación Aérea."
+  },
+  {
+    // 3
+    question: "¿Cuál es la definición de una aeronave RPA?",
+    options: [
+      "a) Una aeronave que puede volar con o sin tripulación.",
+      "b) Una RPA es una aeronave pilotada a Distancia.",
+      "c) Es un vehículo aéreo de combate no tripulado."
+    ],
+    answer: "b) Una RPA es una aeronave pilotada a Distancia."
+  },
+  {
+    // 4
+    question: "¿Qué función cumple la DGAC?",
+    options: [
+      "a) Es la entidad que ejerce la autoridad aeronáutica civil en el país.",
+      "b) Es la entidad que regula supervisa, controla, fiscaliza y sanciona todas las actividades aeronáuticas civiles.",
+      "c) Todas las anteriores"
+    ],
+    answer: "c) Todas las anteriores"
+  },
+  {
+    // 5
+    question: "Los sistemas de aeronaves pilotadas a distancia(RPAS)",
+    options: [
+      "a) Están sujeto a la legislación aeronáutica vigente en el Perú",
+      "b) Están sujeto a la legislación aeronáutica del país del fabricante del RPA",
+      "c) Actualmente no están sujeto a ningún tipo de legislación"
+    ],
+    answer: "a) Están sujeto a la legislación aeronáutica vigente en el Perú"
+  },
+  {
+    // 6
+    question: "¿Qué es un Área Natural Protegida?",
+    options: [
+      "a) Espacio del territorio nacional expresamente reconocido y declarado como tal para conservar la diversidad biológica y demás valores asociados.",
+      "b) Constituye un paisaje urbanístico del Perú.",
+      "c) Porción del territorio nacional de interés histórico."
+    ],
+    answer: "a) Espacio del territorio nacional expresamente reconocido y declarado como tal para conservar la diversidad biológica y demás valores asociados."
+  },
+  {
+    // 7
+    question: "¿A qué se denomina Zona Peligrosa?",
+    options: [
+      "a) Área designada en la que no existen condiciones adecuadas de comunicación",
+      "b) Espacio aéreo de dimensiones definidas sobre el territorio o las aguas jurisdiccionales de un Estado, dentro del cual está prohibido el vuelo de las aeronaves.",
+      "c) Cualquier zona que se encuentre expuesta a eventos naturales."
+    ],
+    answer: "b) Espacio aéreo de dimensiones definidas sobre el territorio o las aguas jurisdiccionales de un Estado, dentro del cual está prohibido el vuelo de las aeronaves."
+  },
+  {
+    // 8
+    question: "¿A quése denomina Zona Restringida?",
+    options: [
+      "a) Zona entendidacomo un área geográfica que se reserva para la industrialización.",
+      "b) Porción de un terreno o superficie que se halla delimitada, la extensión territorial cuyos límites dependen de cuestiones relacionadas a la política.",
+      "c) Espacio aéreo de dimensiones definidas sobre el territorio o las aguas jurisdiccionales de un Estado, dentro del cual está restringido el vuelo de las aeronaves, de acuerdo con determinadas condiciones especificadas"
+    ],
+    answer: "c) Espacio aéreo de dimensiones definidas sobre el territorio o las aguas jurisdiccionales de un Estado, dentro del cual está restringido el vuelo de las aeronaves, de acuerdo con determinadas condiciones especificadas"
+  },
+  {
+    // 9
+    question: "¿A quése denomina Zona Urbana?",
+    options: [
+      "a) Territorio que mayormente se compone de campos en los cuales se desarrolla la agricultura y se cría ganado.",
+      "b) Urbes que están incorporando una serie de sistemas tecnológicos y se consideran como Ciudades inteligentes",
+      "c) Espacio donde habita una población que cuenta con una red de serviciosbásicos, tales como alumbrado público o servicios de agua potable. Incluye edificaciones, calles, plazas y toda infraestructura utilizada frecuentemente por un colectivo humano."
+    ],
+    answer: "c) Espacio donde habita una población que cuenta con una red de serviciosbásicos, tales como alumbrado público o servicios de agua potable. Incluye edificaciones, calles, plazas y toda infraestructura utilizada frecuentemente por un colectivo humano."
+  },
+  {
+    // 10
+    question: "¿A qué se denomina Operación con Visibilidad Directa?",
+    options: [
+      "a) Operación en la cual la tripulación remotamantiene contacto visual directo con la aeronave para dirigir su vuelo.",
+      "b) Operación en la cual la tripulación remota no mantiene contacto visual y no puede satisfacer las responsabilidades de separación y anticolisión.",
+      "c) Operación querequiere que la tripulación remota establezca contacto visual con la ayuda de cámaras y lentes de aumento tales como telescopios."
+    ],
+    answer: "a) Operación en la cual la tripulación remotamantiene contacto visual directo con la aeronave para dirigir su vuelo."
+  },
+  {
+    // 11
+    question: "¿Cuál es el significado de RPA?",
+    options: [
+      "a) Regulation Piloted Aircraft",
+      "b) Regulación Aeronáutica del Perú",
+      "c) Remote Piloted Aircraft (Aeronave Pilotada a Distancia)"
+    ],
+    answer: "c) Remote Piloted Aircraft (Aeronave Pilotada a Distancia)"
+  },
+  {
+    // 12
+    question: "¿Cuál es el significado de RPAS?",
+    options: [
+      "a) Remote Piloted Aircraft Survey (Sondeo de Aeronave Pilotada a Distancia)",
+      "b) Regulaciones Aeronáuticas del Perú",
+      "c) Remote Piloted Aircraft System (Sistema de Aeronaves Pilotadas a Distancia)"
+    ],
+    answer: "c) Remote Piloted Aircraft System (Sistema de Aeronaves Pilotadas a Distancia)"
+  },
+  {
+    // 13
+    question: "¿Cuál es el significado de NOTAM?",
+    options: [
+      "a) Notice To Airmen (Información paraaviadores)",
+      "b) Nota de Prensa",
+      "c) Nota de Peligro"
+    ],
+    answer: "a) Notice To Airmen (Información paraaviadores)"
+  },
+  {
+    // 14
+    question: "La definición de tiempo nocturno es:",
+    options: [
+      "a) Del ocaso alamanecer.",
+      "b) De 1 hora tras el ocaso a 1 hora antes del amanecer.",
+      "c) El tiempo entre el final del crepúsculo civil vespertino y el inicio del crepúsculo civil matutino."
+    ],
+    answer: "c) El tiempo entre el final del crepúsculo civil vespertino y el inicio del crepúsculo civil matutino."
+  },
+  {
+    // 15
+    question: "La autoridad final con respecto a la operación de una aeronave es:",
+    options: [
+      "a) La DGAC.",
+      "b) El piloto al mando.",
+      "c) El fabricante de una aeronave."
+    ],
+    answer: "a) La DGAC."
+  },
+  {
+    // 16
+    question: "La responsabilidad de garantizar que una aeronave reciba mantenimiento de condición Aero navegable reside de manera primordial en:",
+    options: [
+      "a) El piloto al mando.",
+      "b) El propietario u operador.",
+      "c) El mecánico que realiza el trabajo."
+    ],
+    answer: "b) El propietario u operador."
+  },
+  {
+    // 17
+    question: "Diferencia entre QFE y QNH: QFE: Presión atmosférica en un punto de la corteza terrestre. QNH: Presión a nivel del mar, considerando la atmósfera con unas condiciones estándar.",
+    options: [
+      "a) Cierto",
+      "b) Falso"
+    ],
+    answer: "a) Cierto"
+  },
+  {
+    // 18
+    question: "¿Cuánto es 29.92 Pulgadas en Hectopascales?",
+    options: [
+      "a) 1015",
+      "b) 1011",
+      "c) 1013"
+    ],
+    answer: "c) 1013"
+  },
+  {
+    // 19
+    question: "9.Diferencia entre altitud y altura: Altitud: Es cuando se usa un nivel de referencia Altura: Es algo que nunca varia",
+    options: [
+      "a) Cierto",
+      "b) Falso"
+    ],
+    answer: "a) Cierto"
+  },
+  {
+    // 20
+    question: "El Viento Relativo es:",
+    options: [
+      "a) El Flujo de Aire que pasa por un objeto en virtud de la velocidad entre el aire y el objeto.",
+      "b) Las Resistencias parasitas",
+      "c) Las condiciones de sustentación"
+    ],
+    answer: "a) El Flujo de Aire que pasa por un objeto en virtud de la velocidad entre el aire y el objeto."
+  },
+  {
+    // 21
+    question: "Qué sentido tiene la trayectoria de vuelo respecto al Aire es:",
+    options: [
+      "a) Opuesta",
+      "b) Neutral",
+      "c) Longitudinal"
+    ],
+    answer: "a) Opuesta"
+  },
+  {
+    // 22
+    question: "El Aire tiene viscosidad",
+    options: [
+      "a) Cierto",
+      "b) Falso"
+    ],
+    answer: "a) Cierto"
+  },
+  {
+    // 23
+    question: "¿La velocidad de perdida disminuye a medida que el peso aumenta?",
+    options: [
+      "a) Cierto",
+      "b) Falso"
+    ],
+    answer: "b) Falso"
+  },
+  {
+    // 24
+    question: "El altímetro es:",
+    options: [
+      "a) Es un barómetro que muestralos cambios depresión traducidos en altitud, normalmente pies.",
+      "b) Es un barómetro que muestra la altitud.",
+      "c) Es un barómetro que mide la temperatura de la atmosfera."
+    ],
+    answer: "a) Es un barómetro que muestralos cambios depresión traducidos en altitud, normalmente pies."
+  },
+  {
+    // 25
+    question: "La presión atmosférica es:",
+    options: [
+      "a) Es cuando la densidad del aire disminuye",
+      "b) Es la fuerza por unidad de área que ejerce el aire sobre la superficie terrestre",
+      "c) Es un cambio meteorológico"
+    ],
+    answer: "b) Es la fuerza por unidad de área que ejerce el aire sobre la superficie terrestre"
+  },
+  {
+    // 26
+    question: "La altura es:",
+    options: [
+      "a) La distancia vertical entre la aeronave y la superficie terrestre.",
+      "b) La distancia entre la aeronave y el nivel del mar.",
+      "c) La distancia vertical entre la aeronave y el nivel del mar"
+    ],
+    answer: "a) La distancia vertical entre la aeronave y la superficie terrestre."
+  },
+  {
+    // 27
+    question: "¿Qué es la velocidad aérea indicada?",
+    options: [
+      "a) Es la velocidad leída directamente del anemómetro (sin correcciones)",
+      "b) Es la velocidad corregida por posibles errores del propio instrumento y suinstalación.",
+      "c) Es la velocidad superior al régimen de crucero."
+    ],
+    answer: "a) Es la velocidad leída directamente del anemómetro (sin correcciones)"
+  },
+  {
+    // 29
+    question: "Ninguna persona podrá operar un RPAS en proximidad de personas u obstáculos, debiendo mantener una separación vertical del RPA",
+    options: [
+      "a) Mayor de 10 metros y horizontal mayor de 15 metros, en relación a cualquier obstáculo.",
+      "b) Mayor de 20 metros y horizontal mayor de 30 metros, en relación a cualquier obstáculo.",
+      "c) Mayor de 40 metros y horizontal mayor de 60 metros, en relación a cualquier obstáculo"
+    ],
+    answer: "b) Mayor de 20 metros y horizontal mayor de 30 metros, en relación a cualquier obstáculo."
+  },
+  {
+    // 30
+    question: ".¿El peso máximo de despegue de tu RPAS es?",
+    options: [
+      "a) 10 kilos",
+      "b) 25 kilos",
+      "c) 30 kilos"
+    ],
+    answer: "b) 25 kilos"
+  },
+  {
+    // 31
+    question: "¿Qué es una Zona Restringida?",
+    options: [
+      "a) Es el espacio aéreo de dimensiones definidas dentro del cual está restringido el vuelo de las aeronaves.",
+      "b) Es el espacio aéreo de dimensiones definidas dentro del cual esta restringido por determinadas horas el vuelo de la aeronave.",
+      "c) Es el espacio aéreo de dimensiones definidas dentro del cual está permitido el vuelo de las aeronaves."
+    ],
+    answer: "a) Es el espacio aéreo de dimensiones definidas dentro del cual está restringido el vuelo de las aeronaves."
+  },
+  {
+    // 32
+    question: ".¿La información de tiempo crítico sobre los aeropuertos y los cambios que afectan el sistema nacional de espacio aéreo son proporcionados por?",
+    options: [
+      "a) NOTAMS",
+      "b) Circulares de asesoramiento",
+      "c) Boletín diario del centro principal de comunicaciones AFTN de lima"
+    ],
+    answer: "a) NOTAMS"
+  },
+  {
+    // 33
+    question: ".¿Qué es la Resistencia?",
+    options: [
+      "a) Es la fuerza que sufre un cuerpo al moverse a través del aire",
+      "b) Es la fuerza que se opone al avance en el aire.",
+      "c) a) y b) soncorrectas."
+    ],
+    answer: "c) a) y b) soncorrectas."
+  },
+  {
+    // 34
+    question: "¿Qué es la Sustentación? Es la fuerza generada sobre un cuerpo que se desplazade un fluido (aire) de forma perpendicular a la velocidadde la corriente incidente.",
+    options: [
+      "a) Verdadero",
+      "b) Falso"
+    ],
+    answer: "a) Verdadero"
+  },
+  {
+    // 35
+    question: "La sustentación esuna fuerza opuesta a la:",
+    options: [
+      "a) Gravedad",
+      "b) Empuje",
+      "c) Tracción"
+    ],
+    answer: "a) Gravedad"
+  },
+  {
+    // 36
+    question: "Se denomina Resistencia por fricción:",
+    options: [
+      "a) A la que se forma debido a la viscosidad del aire que al pasar por las superficies de la aeronave, seadhieren a este.",
+      "b) La que se forma debido al exceso de sustentación.",
+      "c) La que se forma debido al exceso del ángulo."
+    ],
+    answer: "a) A la que se forma debido a la viscosidad del aire que al pasar por las superficies de la aeronave, seadhieren a este."
+  },
+  {
+    // 37
+    question: "Mientras las superficies de la aeronave sean más lisas, la resistencia por fricción:",
+    options: [
+      "a) Aumentará",
+      "b) Disminuirá",
+      "c) No varía"
+    ],
+    answer: "b) Disminuirá"
+  },
+  {
+    // 38
+    question: "La Resistencia de forma:",
+    options: [
+      "a) Es la que opone el aire, al paso de los objetos a través de él",
+      "b) Es la que se produce por las velocidades",
+      "c) Es la que se produce por gran ángulo de ataque."
+    ],
+    answer: "a) Es la que opone el aire, al paso de los objetos a través de él"
+  },
+  {
+    // 39
+    question: "Las Resistencias por fricción y forma, son denominadas:",
+    options: [
+      "a) Resistencias Inducidas",
+      "b) Resistencias Bases",
+      "c) Resistencias Parasitas"
+    ],
+    answer: "c) Resistencias Parasitas"
+  },
+  {
+    // 42
+    question: ". ¿Qué es una zona peligrosa?",
+    options: [
+      "a) Área donde habitan personas, incluyendo sus viviendas, centros de trabajo y lugares en los que realizan actividades recreacionales y sociales.",
+      "b) Espacio aéreo de dimensiones definidas en el cual puedes desplegarse en determinados momentos actividades peligrosas para el vuelo de las aeronaves.",
+      "c) Espacio que incluye edificaciones, calles, plazas, playas y toda infraestructura o espacio público utilizado frecuentemente por un colectivo humano."
+    ],
+    answer: "b) Espacio aéreo de dimensiones definidas en el cual puedes desplegarse en determinados momentos actividades peligrosas para el vuelo de las aeronaves."
+  },
+  {
+    // 43
+    question: "¿Qué publicación contiene una explicación de las señales y marcas del aeropuerto?",
+    options: [
+      "a) Manual de información aeronáutica (AIM)",
+      "b) Circulares consultivas (AC)",
+      "c) Cuadro suplementario"
+    ],
+    answer: "a) Manual de información aeronáutica (AIM)"
+  },
+  {
+    // 44.1
+    question: "Limitaciones de Operación: Ninguna persona podrá operar un RPAS",
+    options: [
+      "a) Si la masa máxima de despegue del RPA excede los 25 Kg",
+      "b) Si la masa máxima de despegue del RPA excede los 1O Kg",
+      "b) Si la masa máxima de despegue del RPA excede los 15 Kg"
+    ],
+    answer: "a) Si la masa máxima de despegue del RPA excede los 25 Kg"
+  },
+  {
+    // 44.2
+    question: "Limitaciones de Operación: Ninguna persona podrá operar un RPAS:",
+    options: [
+      "a) Sobre zonas pobladas, cuya población sea menos de 2,000 habitantes.",
+      "b) Sobre zonas pobladas, salvo los casos excepcionales que autorice la DGAC",
+      "c) Sobre zonas pobladas, salvo casos de emergencia."
+    ],
+    answer: "b) Sobre zonas pobladas, salvo los casos excepcionales que autorice la DGAC"
+  },
+  {
+    // 44.3
+    question: "Limitaciones de Operación: Ninguna persona podrá operar un RPAS:",
+    options: [
+      "a) Sin antes haber realizado una inspección de pre-vuelo para determinar que el RPAS se encuentra en condiciones seguras para operar",
+      "b) Sin antes haber revisado la cámara",
+      "c) Sin antes verificar el nivel de carga de la batería"
+    ],
+    answer: "a) Sin antes haber realizado una inspección de pre-vuelo para determinar que el RPAS se encuentra en condiciones seguras para operar"
+  },
+  {
+    // 44.4
+    question: "Limitaciones de Operación: Ninguna persona podrá operar un RPAS:",
+    options: [
+      "a) Por encima de 600 ft(200.4 m) de altura sobre el terreno",
+      "b) Por encima de 550 ft(100.4 m) de altura sobre el terreno",
+      "c) Por encima de 500 ft(152.4 m) de altura sobre el terreno"
+    ],
+    answer: "c) Por encima de 500 ft(152.4 m) de altura sobre el terreno"
+  },
+  {
+    // 44.5
+    question: "Limitaciones de Operación: Ninguna persona podrá operar un RPAS:",
+    options: [
+      "a) A más de 100 mph (87 Kt) de velocidad aérea.",
+      "b) A más de 150 mph (.00 131 Kt) de velocidad aérea",
+      "c) A más de 180 mph (-90 151 Kt ) de velocidad aérea"
+    ],
+    answer: "a) A más de 100 mph (87 Kt) de velocidad aérea."
+  },
+  {
+    // 44.6
+    question: "Limitaciones de Operación: Ninguna persona podrá operar un RPAS:",
+    options: [
+      "a) Sin apoyo de otros sistemas en una operación con visibilidad directa visual",
+      "b) Fuera de condiciones de una operación con visibilidad directavisual",
+      "c) Fuera de condiciones de una operación con visibilidad indirecta visual"
+    ],
+    answer: "b) Fuera de condiciones de una operación con visibilidad directavisual"
+  },
+  {
+    // 44.7
+    question: "Limitaciones de Operación: Ninguna persona podrá operar un RPAS:",
+    options: [
+      "a) En condiciones nocturnas (después de la puesta o antes de la salida del sol).",
+      "b) En condiciones nocturnas sin apoyo de sistemas de iluminación externa",
+      "c) En condiciones nocturnas diurnas con menos de 1O Km de visibilidad"
+    ],
+    answer: "a) En condiciones nocturnas (después de la puesta o antes de la salida del sol)."
+  },
+  {
+    // 44.8
+    question: "Limitaciones de Operación: Ninguna persona podrá operar un RPAS:",
+    options: [
+      "a) Durante más de 45 minutos continuos.",
+      "b) Durante más de una 01 hora continua.",
+      "c) Durante más de dos 02 horas continuas"
+    ],
+    answer: "b) Durante más de una 01 hora continua."
+  },
+  {
+    // 44.9
+    question: "Limitaciones de Operación: Ninguna persona podrá operar un RPAS:",
+    options: [
+      "a) Con un piloto que no haya sido acreditado y/o que no haya sido autorizado.",
+      "b) Sin un piloto privado",
+      "c) Sin un piloto planeador"
+    ],
+    answer: "a) Con un piloto que no haya sido acreditado y/o que no haya sido autorizado."
+  },
+  {
+    // 44.10
+    question: "Limitaciones de Operación: Ninguna persona podrá operar un RPAS:",
+    options: [
+      "a) Bajo la influencia delas drogas o el alcohol.",
+      "b) Bajo la influencia de drogas o medicamentos salvo autorización del gerente de la empresa",
+      "e) Bajo la influencia de alcohol salvo no exceda del límite máximo de alcohol permitido en la sangre a 0,25 gramos/ litro"
+    ],
+    answer: "a) Bajo la influencia delas drogas o el alcohol."
+  },
+  {
+    // 44.11
+    question: "Limitaciones de Operación: Ninguna persona podrá operar un RPAS:",
+    options: [
+      "a) A menos de 4 km de un aeródromo, excepto para fines de prevención de impactos con aves",
+      "b) A menos de 3 km de un aeródromo, excepto para fines de prevención de impactos con aves",
+      "e) A menos de 2 km de un aeródromo, excepto para fines de prevenciónde impactos con aves."
+    ],
+    answer: "a) A menos de 4 km de un aeródromo, excepto para fines de prevención de impactos con aves"
+  },
+  {
+    // 44.12
+    question: "Limitaciones de Operación: Ninguna persona podrá operar un RPAS:",
+    options: [
+      "a) Descuidando la atención exclusiva al control de la operación del RPAS salvo cuente con un piloto de apoyo.",
+      "b) Descuidando la atención exclusiva al control de la operación del RPAS salvo cuente con sistemas de apoyo.",
+      "c) Descuidando la atención exclusiva al control de la operación del RPAS"
+    ],
+    answer: "c) Descuidando la atención exclusiva al control de la operación del RPAS"
+  },
+  {
+    // 44.13
+    question: "Limitaciones de Operación: Ninguna persona podrá operar un RPAS:",
+    options: [
+      "a) Sobre vías de transporte señalizadas, incluyendo toda infraestructura vial (viaductos, carreteras, caminos, senderos, puentes), infraestructura de transmisión eléctrica y de telecomunicaciones.",
+      "b) Sobre vías de comunicación, incluyendo toda infraestructura vial (viaductos, carreteras, caminos, senderos, puentes), infraestructura de transmisión eléctrica y de telecomunicaciones (postes, torres, cables y antenas), cursos de aguanavegables y duetos para transporte de hidrocarburos",
+      "e) Sobre vías de comunicación salvo no se perciba concentración de personas."
+    ],
+    answer: "b) Sobre vías de comunicación, incluyendo toda infraestructura vial (viaductos, carreteras, caminos, senderos, puentes), infraestructura de transmisión eléctrica y de telecomunicaciones (postes, torres, cables y antenas), cursos de aguanavegables y duetos para transporte de hidrocarburos"
+  },
+  {
+    // 44.14
+    question: "Limitaciones de Operación: Ninguna persona podrá operar un RPAS:",
+    options: [
+      "a) No podrá dejar caer ni lanzar objetos, material o fluidos desde el RPAS salvo en los casos en que haya sido informado a un Inspector DGAC",
+      "b) No podrá dejar caer ni lanzar objetos, material o fluidos desde el RPAS salvo en los casos en que cuente con autorización expresa de la DGAC sobre la base de informes técnicos",
+      "c) No podrá dejar caer ni lanzar objetos, material o fluidos desde el RPASsalvo en los casos de volantes u objetos que no causen daño a la población."
+    ],
+    answer: "b) No podrá dejar caer ni lanzar objetos, material o fluidos desde el RPAS salvo en los casos en que cuente con autorización expresa de la DGAC sobre la base de informes técnicos"
+  },
+  {
+    // 44.15
+    question: "Limitaciones de Operación: Ninguna persona podrá operar un RPAS:",
+    options: [
+      "a) En zonas peligrosas, zonas prohibidas y zonas restringidas publicadas en la AIP-PERÚ o en los NOTAM incluidos en el sitio web de CORPAC.",
+      "b) En zonas peligrosas, zonas prohibidas y zonas restringidas salvo se responsabilice de causar daños aterceros.",
+      "e) No podrá dejar caer ni lanzar objetos, material o fluidos desde el RPAS salvo en los casos de volantes u objetos que no causen daño a la población"
+    ],
+    answer: "a) En zonas peligrosas, zonas prohibidas y zonas restringidas publicadas en la AIP-PERÚ o en los NOTAM incluidos en el sitio web de CORPAC."
+  },
+  {
+    // 44.16
+    question: "Limitaciones de Operación: Ninguna persona podrá operar un RPAS:",
+    options: [
+      "a) En una navegación aéreainternacional o en alta mar, salvo se haya informado previamente a un Inspector DGAC.",
+      "b) En una navegación aéreainternacional o en alta mar, salvo que cuente con una autorización apropiada de la DGAC",
+      "c) En una navegación aéreainternacional o en alta mar, salvo searealmente imprescindible, de acuerdo a una evaluación de riesgos."
+    ],
+    answer: "b) En una navegación aéreainternacional o en alta mar, salvo que cuente con una autorización apropiada de la DGAC"
+  },
+  {
+    // 45
+    question: "La operación de un RPAS en zonas urbanas podrá autorizarse excepcionalmente a los RPA con un peso máximo de despegue de:",
+    options: [
+      "a) 10 kg",
+      "b) 5kg",
+      "c) 6kg"
+    ],
+    answer: "c) 6kg"
+  },
+  {
+    // 46
+    question: "La operación de un RPAS en zonas urbanas podrá autorizarse excepcionalmente alos RPA sólo en los siguientes casos:",
+    options: [
+      "a) OperadoporEntidades gubernamentalesporrazonesde seguridad ciudadana, Entidades privadas queprestanserviciosdeclaradosde interéspúblico, Cuerpo General de Bomberos Voluntarios delPerú e InstitutoNacional de Defensa Civil (INDECI), en actividades de búsqueda y salvamento.",
+      "b) Operado por Entidadesprivadas para recreación en dias festivos calendarios",
+      "c) Operado por Organismos No Gubernamentales sin fines de lucro."
+    ],
+    answer: "c) Operado por Organismos No Gubernamentales sin fines de lucro."
+  },
+  {
+    // 47
+    question: "¿En qué casos la DGAC podría autorizar las operaciones RPAS en zonas urbanas?:",
+    options: [
+      "a) Siempre quepresente una evaluación deriesgo, el RPAno supere una masa máxima de despegue de 6 kg, cuente con paracaídas y póliza de seguros.",
+      "b) Solo en operaciones no comerciales",
+      "c) A RPAS con una masa máxima de despegue de hasta 25 kg."
+    ],
+    answer: "a) Siempre quepresente una evaluación deriesgo, el RPAno supere una masa máxima de despegue de 6 kg, cuente con paracaídas y póliza de seguros."
+  },
+  {
+    // 48
+    question: "¿Cuáles son las únicas operaciones de RPA Senzonas urbanas que pueden ser autorizadas sin tener que presentar un análisis de riesgo?",
+    options: [
+      "a) Operaciones del Cuerpo General de Bomberos Voluntarios del Perú y del INDECI, en actividades de búsqueda y salvamento, en el combate deincendios y otras emergencias.",
+      "b) Operaciones a cargo de un piloto que cuente con una acreditación de operador RPAS.",
+      "c) Operaciones para el control de peligro aviario"
+    ],
+    answer: "a) Operaciones del Cuerpo General de Bomberos Voluntarios del Perú y del INDECI, en actividades de búsqueda y salvamento, en el combate deincendios y otras emergencias."
+  },
+  {
+    // 49
+    question: "Las operaciones de RPAS para fines Aero deportivas o recreativas requieren",
+    options: [
+      "a) Autorización de la DGAC",
+      "b) Registro del RPAS",
+      "c) Que le piloto a distancia cuente con una acreditación de operador RPAS"
+    ],
+    answer: "b) Registro del RPAS"
+  },
+  {
+    // 50
+    question: ".¿Quién es el máximo responsable de identificar los peligros y tomar medidas ( o intervenir cuando otra persona manipula los controles) para garantizar la seguridad del vuelo?",
+    options: [
+      "a) Piloto remoto al mando",
+      "b) Persona manipulando los controles",
+      "c) Observador visual"
+    ],
+    answer: "a) Piloto remoto al mando"
+  },
+  {
+    // 51
+    question: "¿Después de pasar un frente cálido, la visibilidad es?",
+    options: [
+      "a) Buena",
+      "b) Regular",
+      "c) Mala"
+    ],
+    answer: "b) Regular"
+  },
+  {
+    // 52
+    question: "Para efectos de la navegación se utiliza",
+    options: [
+      "a) La Velocidad indicada (IAS)",
+      "b) La Velocidad Verdadera (TAS)",
+      "c) La Velocidad sobre Tierra (GS)"
+    ],
+    answer: "c) La Velocidad sobre Tierra (GS)"
+  },
+  {
+    // 53
+    question: "¿Qué son coordenadas geográficas?",
+    options: [
+      "a) Son los meridianos de un lugar",
+      "b) Son los paralelos de un lugar",
+      "c) Es el punto imaginario donde convergen la longitud y la latitud de un lugar"
+    ],
+    answer: "c) Es el punto imaginario donde convergen la longitud y la latitud de un lugar"
+  },
+  {
+    // 54
+    question: " ¿Cuántas millas terrestres hay en 280 millas náuticas?",
+    options: [
+      "a) 246 SM. (Millas Terrestres)",
+      "b) 322SM.(MillasTerrestres)",
+      "c) 326 SM. (MillasTerrestres)"
+    ],
+    answer: "b) 322SM.(MillasTerrestres)"
+  },
+  {
+    // 55
+    question: "La Altitud de Presión corregida por la temperatura es:",
+    options: [
+      "a) Altitud Verdadera",
+      "b) Altitud de Densidad",
+      "c) Altitud Absoluta"
+    ],
+    answer: "a) Altitud Verdadera"
+  },
+  {
+    // 56
+    question: "Milla Náutica se define como:",
+    options: [
+      "a) Un (1) minuto de arco solamente en el Ecuador",
+      "b) Un (1) minuto de arco del Ecuador y cualquier meridiano",
+      "c) Un (1) minuto de arco del Ecuador y cualquier paralelo"
+    ],
+    answer: "b) Un (1) minuto de arco del Ecuador y cualquier meridiano"
+  },
+  {
+    // 57
+    question: "La Velocidad Indicada corregida por errores de instalación se conoce como:",
+    options: [
+      "a) Velocidad sobre Tierra",
+      "b) Velocidad Calibrada del Aire(CAS)",
+      "c) Velocidad Efectiva (EAS)"
+    ],
+    answer: "b) Velocidad Calibrada del Aire(CAS)"
+  },
+  {
+    // 58
+    question: " ¿En cuantos meridianos está dividida la esfera terrestre?",
+    options: [
+      "a) 730",
+      "b) 360",
+      "c) 180"
+    ],
+    answer: "b) 360"
+  },
+  {
+    // 59
+    question: "Las coordenadas geográficas de un punto son:",
+    options: [
+      "a) Un punto determinado, entre el Ecuador y un Meridiano.",
+      "b) Un punto en el Espacio, entre un Meridiano y el Meridiano Cero.",
+      "c) Un punto situado en el espacio, determinando por un valor"
+    ],
+    answer: "c) Un punto situado en el espacio, determinando por un valor"
+  },
+  {
+    // 60
+    question: "Los Meridianos son círculos mayores de Longitud",
+    options: [
+      "a) Cierto",
+      "b) Falso"
+    ],
+    answer: "a) Cierto"
+  },
+  {
+    // 61
+    question: "Las Líneas que dividen la tierra en 360 partes iguales son los paralelos",
+    options: [
+      "a) Cierto",
+      "b) Falso"
+    ],
+    answer: "b) Falso"
+  },
+  {
+    // 63
+    question: "¿Cuántas millas náuticas hay en 300 millas terrestres?",
+    options: [
+      "a) 240",
+      "b) 320",
+      "c) 260"
+    ],
+    answer: "c) 260"
+  },
+  {
+    // 62
+    question: "Cómo se llamala velocidadresultantedespués de corregir el efecto del viento en el vuelo:",
+    options: [
+      "a) Velocidad Calibrada (CAS)",
+      "b) Velocidad Indicada (IAS)",
+      "c) Velocidad Sobre Tierra(EAS)"
+    ],
+    answer: "c) Velocidad Sobre Tierra(EAS)"
+  },
+  {
+    // 64
+    question: "La Diferencia entre Curso y Rumbo es: Rumbo:Es línea dibujada de un Punto A al Punto B, independiente a donde apunte la nariz de la aeronave. Curso: Es el ángulo entre el norte y el eje longitudinal del avión, es decir a donde apunta la nariz de laaeronave.",
+    options: [
+      "a) Cierto",
+      "b) Falso"
+    ],
+    answer: "b) Falso"
+  },
+  {
+    // 65
+    question: "¿Cuál es el ámbito de aplicación de la Norma Técnica 001-2015 para operaciones de sistema de aeronaves piloteadas a distancia?",
+    options: [
+      "a) Dentro de los límites del territorio peruano.",
+      "b) A nivel de la región de Sudamérica",
+      "c) A nivel Internacional."
+    ],
+    answer: "a) Dentro de los límites del territorio peruano."
+  },
+  {
+    // 66
+    question: ". ¿Qué hacer si se pierde contacto visual con el vehículo o sistema aéreo piloteado a distancia?",
+    options: [
+      "a) Aterrizar donde sea",
+      "b) Retorno a casa (RTH)",
+      "c) Solicitar ayuda a emergencias"
+    ],
+    answer: "b) Retorno a casa (RTH)"
+  },
+  {
+    // 67
+    question: "¿Qué hacer si le queda poca autonomía?",
+    options: [
+      "a) Llevarlo a un lugar seguro para que caiga",
+      "b) Aterrizar la aeronave",
+      "c) Elevar la aeronave"
+    ],
+    answer: "b) Aterrizar la aeronave"
+  },
+  {
+    // 68
+    question: "¿Qué hacer si se pierde contacto visual con el vehículo o sistema aéreo piloteado a distancia y no se logra recuperar el mismo?",
+    options: [
+      "a) Llevarlo a un lugar seguro para que caiga",
+      "b) Retorno a casa (RTH)",
+      "c) Solicitar ayuda a emergencias"
+    ],
+    answer: "b) Retorno a casa (RTH)"
+  },
+  {
+    // 69
+    question: "La Niebla se forma cuando:",
+    options: [
+      "a) Existe aire húmedo y gran densidad",
+      "b) El aire se enfría por debajo de su punto de rocío",
+      "c) Las nubes están muy bajas, cerca o a nivel del suelo y formadas por partículas de agua de pequeño volumen"
+    ],
+    answer: "c) Las nubes están muy bajas, cerca o a nivel del suelo y formadas por partículas de agua de pequeño volumen"
+  },
+  {
+    // 70
+    question: "La cantidad de vapor de agua que puedecontener el aire depende de",
+    options: [
+      "a) El punto derocío.",
+      "b) La temperatura del aire",
+      "c) La estabilidad del aire"
+    ],
+    answer: "b) La temperatura del aire"
+  },
+  {
+    // 71
+    question: "Las nubes, neblina o rocío siempre deben su origen a:",
+    options: [
+      "a) La condensación del vapor de agua",
+      "b) La presencia del vapor de agua.",
+      "c) Una humedad relativa de 100 por ciento."
+    ],
+    answer: "a) La condensación del vapor de agua"
+  },
+  {
+    // 72
+    question: "La presencia degranizo sobre la superficie es un indicativo de la existencia de",
+    options: [
+      "a) Tormentas en el área",
+      "b) Un pasaje de frente frío.",
+      "c) Una inversión térmica con lluvia congelada a una altitud considerable"
+    ],
+    answer: "c) Una inversión térmica con lluvia congelada a una altitud considerable"
+  },
+  {
+    // 73
+    question: "¿Dónde se suscita el vientocortante?",
+    options: [
+      "a) Sólo enaltitudesmayores",
+      "b) Sólo en altitudes menores",
+      "c) En todas las altitudes, en todas las direcciones"
+    ],
+    answer: "c) En todas las altitudes, en todas las direcciones"
+  },
+  {
+    // 74
+    question: "¿Qué condiciones son necesarias para la formación de tormentas?",
+    options: [
+      "a) Alta humedad, fuerza impulsora, y condiciones inestables",
+      "b) Alta humedad, alta temperatura, y nubes cumulus",
+      "c) Fuerza impulsora, aire húmedo, y gran cubierta de nubes"
+    ],
+    answer: "a) Alta humedad, fuerza impulsora, y condiciones inestables"
+  },
+  {
+    // 75
+    question: "¿Qué fenómeno meteorológico suele estar asociado a una tormenta?",
+    options: [
+      "a) Relámpagos",
+      "b) Luvia considerable",
+      "c) Granizo."
+    ],
+    answer: "a) Relámpagos"
+  },
+  {
+    // 76
+    question: "Existe alguna diferencia entre niebla y neblina:",
+    options: [
+      "a) Si, la principal diferencia entre la niebla y la neblina radica en su densidad",
+      "b) No, es los mismo, impiden la visibilidad a través de ella",
+      "c) No, es lo mismo, se producen bajo temperaturas muy bajas"
+    ],
+    answer: "a) Si, la principal diferencia entre la niebla y la neblina radica en su densidad"
+  },
+  {
+    // 77
+    question: "¿Por qué se originan los vientos?",
+    options: [
+      "a) Los vientos se originan por las bajas temperaturas",
+      "b) Los vientos seoriginan como consecuencia de las diferenciasenla presión atmosférica",
+      "c) Los vientos se originan como un aviso de una próxima lluvia"
+    ],
+    answer: "b) Los vientos seoriginan como consecuencia de las diferenciasenla presión atmosférica"
+  },
+  {
+    // 78
+    question: "¿Por qué se origina la brisa marina?",
+    options: [
+      "a) Se producen por el efecto delas diferencias de calentamientoy enfriamiento que experimenta la Tierra y las masas de agua.",
+      "b) Se originan por el calentamiento delmar",
+      "c) Se producen en las costas"
+    ],
+    answer: "a) Se producen por el efecto delas diferencias de calentamientoy enfriamiento que experimenta la Tierra y las masas de agua."
+  },
+  {
+    // 79
+    question: "¿la presión atmosférica depende de?",
+    options: [
+      "a) Altitud, humedad y temperatura",
+      "b) Si es anticiclón o borrasca",
+      "c) La época del año"
+    ],
+    answer: "a) Altitud, humedad y temperatura"
+  },
+  {
+    // 80
+    question: "Durante el paso de un frente frio, el viento",
+    options: [
+      "a) Disminuye y cambia de dirección",
+      "b) Aumenta y cambia de dirección",
+      "c) Permanece constante",
+      "d) Aumenta y mantiene la misma dirección"
+    ],
+    answer: "b) Aumenta y cambia de dirección"
+  },
+  {
+    // 81
+    question: "¿Cómo se realiza la formación de las nubes?",
+    options: [
+      "a) Por cambios de la temperatura del agua",
+      "b) La condensación del vapor de agua",
+      "c) La condensación del viento"
+    ],
+    answer: "b) La condensación del vapor de agua"
+  },
+  {
+    // 82
+    question: "¿Como se deletrea la palabra ALTITUD según el alfabeto internacional de radiocomunicaciones?",
+    options: [
+      "a)",
+      "b) ALFA - LIMA -TANGO - INDIA -TANGO - UNIFORM - DELTA",
+      "c)"
+    ],
+    answer: "b) ALFA - LIMA -TANGO - INDIA -TANGO - UNIFORM - DELTA"
+  },
+  {
+    // 83
+    question: "Cada proceso físico del clima va acompañado o es el resultado de un",
+    options: [
+      "",
+      "b) El calentamiento desigual de la superficie terrestre",
+      ""
+    ],
+    answer: "b) El calentamiento desigual de la superficie terrestre"
+  },
+  {
+    // 84
+    question: "¿Cuáles son las características de una masa de aire húmedo inestable?",
+    options: [
+      "",
+      "b) Nubes cumuliformes y precipitaciones lluviosas",
+      ""
+    ],
+    answer: "b) Nubes cumuliformes y precipitaciones lluviosas"
+  },
+  {
+    // 85
+    question: "¿Qué fenómeno climático señala el comienzo de la etapa madura de una tormenta eléctrica?",
+    options: [
+      "a) Nubes con apariencia de cabeza de yunque",
+      "b) Precipitación que comienza a caer",
+      "c) Tasa de crecimiento máximo de las nubes"
+    ],
+    answer: "b) Precipitación que comienza a caer"
+  },
+  {
+    // 86
+    question: "¿Qué condiciones son necesarias para la formación de una tormenta eléctrica",
+    options: [
+      "",
+      "b) Alta humedad, fuerza impulsadora y condiciones inestables",
+      ""
+    ],
+    answer: "b) Alta humedad, fuerza impulsadora y condiciones inestables"
+  },
+  {
+    // 87
+    question: "¿Qué es un espacio aéreo segregado?",
+    options: [
+      "a) Un espacio aéreo para un vuelo privado",
+      "b) Un espacio aéreo de dimensiones especificas asignado a usuarios específicos para uso exclusivo",
+      "c) Un espacio sin dimensiones especificas asignado a usuarios específicos para uso exclusivo"
+    ],
+    answer: "b) Un espacio aéreo de dimensiones especificas asignado a usuarios específicos para uso exclusivo"
+  },
+  {
+    // 88
+    question: "¿Se define como ráfaga?",
+    options: [
+      "",
+      "b) contiene el máximo de humedad",
+      ""
+    ],
+    answer: "b) contiene el máximo de humedad"
+  },
+  {
+    // 89
+    question: "¿El aire esta saturado cuando?",
+    options: [
+      "",
+      "b) contiene el máximo de humedad",
+      ""
+    ],
+    answer: "b) contiene el máximo de humedad"
+  },
+  {
+    // 90
+    question: "¿La temperatura a la cual se alcanza el punto de saturación del vapor de agua , se denomina?",
+    options: [
+      "",
+      "b) Punto de Rocío",
+      ""
+    ],
+    answer: "b) Punto de Rocío"
+  },
+  {
+    // 91
+    question: "¿Qué son los núcleos de condensación?",
+    options: [
+      "",
+      "b) Partículas microscópicas que facilitan la formación gotas de agua en las nubes",
+      ""
+    ],
+    answer: "b) Partículas microscópicas que facilitan la formación gotas de agua en las nubes"
+  },
+  {
+    // 92
+    question: "¿La nube más peligrosa para el vuelo es?",
+    options: [
+      "",
+      "b) Cumulonimbus",
+      ""
+    ],
+    answer: "b) Cumulonimbus"
+  },
+  {
+    // 93
+    question: "¿Cuál es la presión de la atmosfera estándar a nivel del mar?",
+    options: [
+      "",
+      "b) 29.92 pulgadas de mercurio o 1013 milibares",
+      ""
+    ],
+    answer: "b) 29.92 pulgadas de mercurio o 1013 milibares"
+  },
+  {
+    // 94
+    question: "¿Nivel de condensación es:?",
+    options: [
+      "",
+      "b) El nivel de condensación por ascenso es la altura a la que una parcela de aire se satura cuando asciende siguiendo un proceso adiabático seco",
+      ""
+    ],
+    answer: "b) El nivel de condensación por ascenso es la altura a la que una parcela de aire se satura cuando asciende siguiendo un proceso adiabático seco"
+  },
+  {
+    // 95
+    question: "¿Qué es necesario paraque se produzca precipitaciones?",
+    options: [
+      "",
+      "b) La condensación de vapor de agua",
+      ""
+    ],
+    answer: "b) La condensación de vapor de agua"
+  },
+  {
+    // 96
+    question: "¿Después del paso de un frente frio, la visibilidad es?",
+    options: [
+      "a) Buena",
+      "b) Mala",
+      "c) Regular"
+    ],
+    answer: "a) Buena"
+  },
+  {
+    // 97
+    question: "¿Las nubes bajas, desde cerca del suelo hasta 2000 metros son?",
+    options: [
+      "",
+      "b) Estratos y Cúmulos",
+      ""
+    ],
+    answer: "b) Estratos y Cúmulos"
+  },
+  {
+    // 98
+    question: "¿Las corrientes de aire en la etapa de desarrollo de una tormenta son?",
+    options: [
+      "",
+      "b) Corrientes Térmicas",
+      ""
+    ],
+    answer: "b) Corrientes Térmicas"
+  },
+  {
+    // 99
+    question: "¿Se puede eliminar el error humano?",
+    options: [
+      "a) Si, con el apoyo dela tecnología",
+      "b) No, sin embargo nos podemos preparar para fallar lo menos posible",
+      "c) Si, con reglas claras y sanciones que se cumplan."
+    ],
+    answer: "b) No, sin embargo nos podemos preparar para fallar lo menos posible"
+  },
+  {
+    // 100
+    question: "¿Puedo operar una aeronave si estoy sufriendo de alguna dolencia física?",
+    options: [
+      "a) Sí, me encuentro medicado",
+      "b) No, porque puede interferir con la operación segura del RPA",
+      "c) Sí, siempre y cuando tenga un piloto de apoyo."
+    ],
+    answer: "b) No, porque puede interferir con la operación segura del RPA"
+  },
+  {
+    // 101
+    question: "¿Es conveniente que el piloto tenga un exceso de confianza en el manejo del RPA?",
+    options: [
+      "a) Sí, porque le permite un alto grado de automatización y fiabilidad.",
+      "b) Si, siempre y cuando tenga años de experiencia.",
+      "c) No, porque le puede impedir detectan los peligros y subestimarel riesgo"
+    ],
+    answer: "c) No, porque le puede impedir detectan los peligros y subestimarel riesgo"
+  },
+  {
+    // 102
+    question: "¿Qué es la complacencia hacia la tecnología?",
+    options: [
+      "a) Dependemos de la tecnología. Los avances técnicos nos fuerzan a una dependencia cada vez mayor de ellos",
+      "b) Se incrementa el sentimiento de que los sistemas resuelven todos los problemas",
+      "c) Todas las anteriores"
+    ],
+    answer: "c) Todas las anteriores"
+  },
+  {
+    // 103
+    question: ".Laimportancia de detectarlas reacciones fisiológicas frente auna situación extrema tiene como objetivo:",
+    options: [
+      "a) Evaluar lo que nos está ocurriendo",
+      "b) Determinar conductas que nos permitan aliviar o controlar la reacción",
+      "c) Todas las anteriores"
+    ],
+    answer: "c) Todas las anteriores"
+  },
+  {
+    // 104
+    question: "Respecto a la privacidad de las personas, no está permitido",
+    options: [
+      "a) La grabación y difusión de la imagen de una persona sin su consentimiento ni autorización puede constituir una violación del derecho a la intimidad",
+      "b) La grabación de imágenes con fines de espionaje",
+      "c) Todas las anteriores"
+    ],
+    answer: "c) Todas las anteriores"
+  },
+  {
+    // 105
+    question: "¿Cuál es la premisa básica para enfrentar el tema del error?",
+    options: [
+      "a) El entrenamiento puede disminuir a cero la ocurrencia de errores",
+      "b) El error es constitutivo de la naturaleza humana",
+      "c) El error debeser sancionado"
+    ],
+    answer: "b) El error es constitutivo de la naturaleza humana"
+  },
+  {
+    // 106
+    question: ".¿Cuál es la principal diferencia entre la alerta y la atención?",
+    options: [
+      "a) La alerta es una percepción globaldel entorno, la atención es la focalización en algunos de los estímulosdel entorno",
+      "b) La atención es un requisito de la alerta",
+      "c) La atenciónes una percepción global y la alerta es la focalizaciónen algunosde los estímulos del entorno"
+    ],
+    answer: "a) La alerta es una percepción globaldel entorno, la atención es la focalización en algunos de los estímulosdel entorno"
+  },
+  {
+    // 107
+    question: "¿Cuáles son los síntomas fácilmente observables a simple vista de un estrés?",
+    options: [
+      "a) Fatiga",
+      "",
+      ""
+    ],
+    answer: "a) Fatiga"
+  },
+  {
+    // 108
+    question: "Las anfetaminas :",
+    options: [
+      "a) Drogas, afectan el sistema nervioso central",
+      "",
+      ""
+    ],
+    answer: "a) Drogas, afectan el sistema nervioso central"
+  },
+  {
+    // 109
+    question: "¿Qué número de Norma Técnica Complementaria normalas operaciones de Sistemas de Aeronaves Pilotadas a Distancia?",
+    options: [
+      "a) NTC 001-2015",
+      "b) NTC 001-2014",
+      "c) NTC 001-2016"
+    ],
+    answer: "a) NTC 001-2015"
+  },
+  {
+    // 110
+    question: "¿Quién es la entidad responsable de controlar el uso de un RPAS en el Perú se realice en el ámbito de la ley y la seguridad?",
+    options: [
+      "a) El MTC es responsable de controlar que el uso de dichas aeronaves en el Perú se realíce en el ámbíto de la ley y la segurídad.",
+      "b) La DGAC es responsable de controlar que el uso de díchas aeronaves en el Perú se realíce en el ámbíto de la ley y la segurídad.",
+      "c) Nínguna es correcta"
+    ],
+    answer: "b) La DGAC es responsable de controlar que el uso de díchas aeronaves en el Perú se realíce en el ámbíto de la ley y la segurídad."
+  },
+  {
+    // 111
+    question: "¿A quíén es aplícable esta NTC?",
+    options: [
+      "a) Esta NTC es aplícable a las personas u organízacíones que pretendan hacer uso de sístemas de aeronaves pílotadas a dístancía (RPAS) para cualquíer actívídad cívíl.",
+      "b) Esta NTC es aplícable a las personas u organízacíones que pretendan hacer uso de sístemas de aeronaves pílotadas a dístancía (RPAS) para cualquíer actívídad cívíl o mílítar",
+      "c) La dos anteríores son correctas"
+    ],
+    answer: "a) Esta NTC es aplícable a las personas u organízacíones que pretendan hacer uso de sístemas de aeronaves pílotadas a dístancía (RPAS) para cualquíer actívídad cívíl."
+  },
+  {
+    // 112
+    question: "¿A quíén no es aplícable esta NTC?",
+    options: [
+      "a) No aplíca a las operacíones de fotografía.",
+      "b) No aplíca a las aeronaves decívíles.",
+      "c) No aplíca a las aeronaves de Estado, es decír a aquellas que sean utílízadas en servícíos mílítares, de polícía o de aduanas"
+    ],
+    answer: "c) No aplíca a las aeronaves de Estado, es decír a aquellas que sean utílízadas en servícíos mílítares, de polícía o de aduanas"
+  },
+  {
+    // 113
+    question: "¿Qué debe hacer todo propietariode un RPAS ante la DGAC?",
+    options: [
+      "a) Todo propíetarío de un RPAS deberá regístrarlo en la DGAC, Díreccíón de Certíficacíones y Autorízacíones",
+      "b) Todo propietario de un RPAS deberá registrarlo en la DGAC, Dirección de Regulacióny Promoción.",
+      "c) Ambas son correctas"
+    ],
+    answer: "a) Todo propíetarío de un RPAS deberá regístrarlo en la DGAC, Díreccíón de Certíficacíones y Autorízacíones"
+  },
+  {
+    // 114
+    question: "¿Qué Dirección de la DGAC otorga al operador la Tarjeta de registro del RPAS?",
+    options: [
+      "a) La Dirección de Certificaciones y Autorizaciones",
+      "b) La Dirección de Regulación y Promoción",
+      "c) La Dirección de Seguridad Aeronáutica"
+    ],
+    answer: "a) La Dirección de Certificaciones y Autorizaciones"
+  },
+  {
+    // 115
+    question: "¿Dónde será tramita la Acreditación transitoria del operador/piloto de RPAS?",
+    options: [
+      "a) Será tramitada ante la Coordinación Técnica de Operaciones de la Dirección deSeguridad Aeronáutica de laDGAC",
+      "b) Será tramitada ante la Coordinación Técnica de Licencias de la Dirección de Certificaciones y Autorizaciones de la DGAC",
+      "c) Será tramitada ante la Coordinación Técnica de Aeronavegabilidad de la Dirección de Seguridad Aeronáutica de la DGAC"
+    ],
+    answer: "b) Será tramitada ante la Coordinación Técnica de Licencias de la Dirección de Certificaciones y Autorizaciones de la DGAC"
+  },
+  {
+    // 116
+    question: "¿Quién debe contar con una autorización para operar un RPAS?",
+    options: [
+      "a) Toda persona que opere o pilotee a distancia un RPASpara la práctica aerodeportiva o recreativa",
+      "b) Toda persona que opere o pilotee a distancia un RPASpara la práctica aerodeportiva, recreativa o militar",
+      "c) Toda personaque opere o pilotee a distancia un RPASpara usos diferentes a la práctica Aero deportiva o recreativa."
+    ],
+    answer: "c) Toda personaque opere o pilotee a distancia un RPASpara usos diferentes a la práctica Aero deportiva o recreativa."
+  },
+  {
+    // 117
+    question: "El Apéndice A de esta NTC se refiere a",
+    options: [
+      "a) Declaración jurada simple de responsabilidad solidaria NTC",
+      "b) Declaraciónjurada simple de solicitante deacreditacióntransitoria de operador/ piloto de RPAS",
+      "c) Formato de solicitud de registro de datos de RPAS"
+    ],
+    answer: "c) Formato de solicitud de registro de datos de RPAS"
+  },
+  {
+    // 118
+    question: "El Apéndice B de esta NTC se refiere a",
+    options: [
+      "a) Declaración jurada simple de responsabilidad solidaria",
+      "b) Declaración jurada simple de solicitante de acreditación transitoria de operador/ piloto de RPAS",
+      "c) Formato de solicitud de registro de datos de RPAS"
+    ],
+    answer: "b) Declaración jurada simple de solicitante de acreditación transitoria de operador/ piloto de RPAS"
+  },
+  {
+    // 119
+    question: "9.El Apéndice C de esta NTC se refiere a",
+    options: [
+      "a) Declaración jurada simple de responsabilidad solidaria",
+      "b) Declaraciónjurada simple desolicitante deacreditación transitoria de operador/ piloto de RPAS",
+      "c) Formato de solicitud de autorización y análisis deriesgopara una operación de sistema de aeronave pilotada a distancias en zonas urbanas o en la vecindad de aeródromos"
+    ],
+    answer: "a) Declaración jurada simple de responsabilidad solidaria"
+  },
+  {
+    // 120
+    question: ".¿Pueden ser menor de edad los operadores sistema de aeronaves pilotadas a distancia con fines recreativos o deportivos?",
+    options: [
+      "a) Si, cuando sea mayor de 16 años y bajo supervisión de un mayor de edad",
+      "b) No, es a partir de los 18 años de edad",
+      "c) Si, solo si esta acompañado de un instructor"
+    ],
+    answer: "b) No, es a partir de los 18 años de edad"
+  },
+  {
+    // 121
+    question: ".¿Es obligatorio toda persona que opere o pilotee a distancia un RPAS para usos diferentes a la práctica Aero deportiva o recreativa cuente con una póliza de seguro?",
+    options: [
+      "a) No es obligatorio",
+      "b) No solo presentar una declaración jurada de responsabilidad solidaria",
+      "c) Es obligatorio contar con una póliza de seguros de responsabilidad civil frente a terceros por los daños que puedan surgir durante sus operaciones"
+    ],
+    answer: "c) Es obligatorio contar con una póliza de seguros de responsabilidad civil frente a terceros por los daños que puedan surgir durante sus operaciones"
+  },
+  {
+    // 122
+    question: "Los seguros a contratar por un operador un RPAS para usos diferentes a la práctica Aero deportiva o recreativa ¿Qué tipo de cobertura tendrán?",
+    options: [
+      "b) Cobertura Mínima 5 UIT para accidentes a terceros",
+      "b) Cobertura Mínima 10 UIT para accidentes a terceros",
+      "b) Cobertura Mínima 12 UIT para accidentes a terceros"
+    ],
+    answer: "b) Cobertura Mínima 10 UIT para accidentes a terceros"
+  },
+  {
+    // 123
+    question: "¿Se recomienda a los pilotos de los vehículos o sistema aéreo pilotados a distancia que posean luces de navegación encendidas?",
+    options: [
+      "b) Sólo cuando haya neblina",
+      "b) Siempre deben estar encendidas",
+      "c) Sólo cuando sea de noche"
+    ],
+    answer: "b) Siempre deben estar encendidas"
+  },
+  {
+    // 124
+    question: "En relación a la proximidad de personas, Ninguna persona podrá operar un RPAS",
+    options: [
+      "a) Sobre personas no involucradas en la operación",
+      "b) En proximidad de personas u obstáculos, debiendo mantener una separación vertical del RPAS mayor de 20 metros y horizontal mayor de 30 metros, en relación a cualquier obstáculo",
+      "c) A y B son verdaderas"
+    ],
+    answer: "c) A y B son verdaderas"
+  },
+  {
+    // 125
+    question: "En relación al tiempo de la operación, ninguna persona podrá operar un RPAS",
+    options: [
+      "a) Durante menos de una hora continuada",
+      "b) Durante mas de una hora continuada",
+      "c) Durante mas de 90 minutos continuos"
+    ],
+    answer: "b) Durante mas de una hora continuada"
+  },
+  {
+    // 126
+    question: "En relación al manual del fabricante, ninguna persona podrá operar un RPAS",
+    options: [
+      "a) Sin contar con una batería adicional",
+      "b) Sin contar con el manual del fabricante del RPAS",
+      "c) Sin contar con los teléfonos de emergencia"
+    ],
+    answer: "b) Sin contar con el manual del fabricante del RPAS"
+  },
+  {
+    // 120
+    question: "Para control de peligro aviario, el explotador del aeródromo y que deberá contener como mínimo las siguientes previsiones",
+    options: [
+      "a) Características de la fauna aviar vinculada a incidentes en el aeródromo y localización del peligro aviar",
+      "b) Entidades gubernamentales encargadas de la fauna aviar",
+      "c) Cuerpo general de bomberos voluntarios del Perú"
+    ],
+    answer: "a) Características de la fauna aviar vinculada a incidentes en el aeródromo y localización del peligro aviar"
+  },
+  {
+    // 128
+    question: ". La operación de un RPAS en zonas urbanas podrá autorizarse excepcionalmente a los rpas con un peso máximo de despegue:",
+    options: [
+      "a) De hasta 6 kg equipados con paracaídas de emergencia",
+      "b) De dos (2) kg",
+      "c) De tres (3) kg"
+    ],
+    answer: "a) De hasta 6 kg equipados con paracaídas de emergencia"
+  },
+
+];
+
+
+const selectedQuestions = shuffleArray(allQuestions).slice(0, 20);
+
+let currentQuestion = 0;
+let score = 0;
+
+function displayQuestion() {
+  const questionDiv = document.getElementById("question");
+  const optionsDiv = document.getElementById("options");
+
+  questionDiv.textContent = `Pregunta ${currentQuestion + 1}/${selectedQuestions.length}: ${selectedQuestions[currentQuestion].question}`;
+
+  optionsDiv.innerHTML = "<ul>";
+  for (let i = 0; i < selectedQuestions[currentQuestion].options.length; i++) {
+    optionsDiv.innerHTML += `<li><label><input type="radio" name="answer" value="${selectedQuestions[currentQuestion].options[i]}">
+    ${selectedQuestions[currentQuestion].options[i]}</label></li>`;
+  }
+  optionsDiv.innerHTML += "</ul>";
+}
+
+function checkAnswer() {
+  const selectedOption = document.querySelector("input[name='answer']:checked");
+  if (selectedOption) {
+    const userAnswer = selectedOption.value;
+    const resultDiv = document.getElementById("result");
+    if (userAnswer === selectedQuestions[currentQuestion].answer) {
+      score++;
+      resultDiv.innerHTML = "Correcto ✔";
+    } else {
+      resultDiv.innerHTML = `Incorrecto ❌ <br> Respuesta correcta: ${selectedQuestions[currentQuestion].answer}`;
+    }
+    currentQuestion++;
+    if (currentQuestion < selectedQuestions.length) {
+      displayQuestion();
+    } else {
+      showScore();
+    }
+  }
+}
+
+function showScore() {
+  const resultDiv = document.getElementById("result");
+  resultDiv.innerHTML = `Puntuación final: ${score}/${selectedQuestions.length}`;
+}
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+function toggleMode() {
+  const body = document.body;
+  const modeToggle = document.getElementById("modeToggle");
+  if (body.classList.contains("dark-mode")) {
+    body.classList.remove("dark-mode");
+    modeToggle.textContent = "Modo Noche";
+  } else {
+    body.classList.add("dark-mode");
+    modeToggle.textContent = "Modo Día";
+  }
+}
+
+displayQuestion();
+</script>
+</body>
+</html>
